@@ -1,0 +1,24 @@
+zabbix_export:
+  version: '6.2'
+  date: '2022-10-15T10:37:53Z'
+  template_groups:
+    -
+      uuid: 7df96b18c230490a9a0a9e2307226338
+      name: Templates
+  templates:
+    -
+      uuid: 7ca1a58f2f454265a9996c39ac68c47f
+      template: 'Template Oxidized'
+      name: 'Template Oxidized'
+      groups:
+        -
+          name: Templates
+      macros:
+        -
+          macro: '{$OXIDIZED_ENABLE}'
+        -
+          macro: '{$OXIDIZED_MODEL}'
+        -
+          macro: '{$OXIDIZED_PASSWORD}'
+        -
+          macro: '{$OXIDIZED_USERNAME}'
