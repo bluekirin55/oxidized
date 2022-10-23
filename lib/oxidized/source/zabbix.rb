@@ -8,9 +8,23 @@ module Oxidized
     end
 
     def setup
-      return unless @cfg.empty?
+      if @cfg.empty?
+        Oxidized.asetus.user.source.zabbix.url       = "http://localhost/api_jsonrpc.php"
+        Oxidized.asetus.user.source.zabbix.user      = "Admin"
+        Oxidized.asetus.user.source.zabbix.password  = "zabbix"
+        Oxidized.asetus.user.source.zabbix.token     = ""
 
-      raise NoConfig, 'no source l config, edit ~/.config/oxidized/config'
+        Oxidized.asetus.user.source.zabbix.map.model    = "{$OXIDIZED_MODEL}"
+        Oxidized.asetus.user.source.zabbix.map.username = "{$OXIDIZED_USERNAME}"
+        Oxidized.asetus.user.source.zabbix.map.password = "{$OXIDIZED_PASSWORD}"
+        Oxidized.asetus.user.source.zabbix.map.template = "Template Oxidized"
+
+        Oxidized.asetus.user.source.zabbix.vars_map.enable = "{$OXIDIZED_ENABLE}"
+
+        Oxidized.asetus.save :user
+
+        raise NoConfig, 'no source l config, edit ~/.config/oxidized/config'
+      end
     end
 
     require "net/http"
@@ -18,13 +32,16 @@ module Oxidized
 
     def load(node_want = nil)
 
-      token = zabbix_user_login(@cfg.user.to_s, @cfg.password.to_s)
+      if (@cfg.token.nil?) then
+        token = zabbix_user_login(@cfg.user.to_s, @cfg.password.to_s)
+      else
+        token = @cfg.token.to_s
+      end
       result = zabbix_template_get(@cfg.template, token)
 
       if result.length == 0
         exit
       end
-
 
       hostids = []
       result[0]["hosts"].each do | host |
